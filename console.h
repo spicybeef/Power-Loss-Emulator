@@ -51,6 +51,15 @@ typedef enum
 #define HEADER_TITLE_EXTRAS_WIDTH   (6) // "=[  ]=" = 6 characters
 #define MAX_HEADER_TITLE_WIDTH      (CONSOLE_WIDTH - HEADER_TITLE_EXTRAS_WIDTH) 
 
+typedef struct consoleSettings
+{
+    // Splash screen settings
+    splash_t            *splashScreenPointer;
+    unsigned int        numSplashLines;
+    // Pointer to the main menu
+    consoleMenu_t       *mainMenuPointer;
+} consoleSettings_t;
+
 typedef struct consoleMenuId
 {
     char                name[MAX_MENU_NAME_LENGTH];
@@ -91,7 +100,7 @@ void Console_Main(void);
 void Console_WaitForKey(void);
 
 void Console_TraverseMenus(consoleMenu_t *menu);
-char Console_PrintOptionsAndGetResponse(consoleSelection_t *selections, unsigned int numSelections, unsigned int numMenuSelections);
+char Console_PrintOptionsAndGetResponse(const consoleSelection_t selections[], unsigned int numSelections, unsigned int numMenuSelections);
 void Console_Print(const char *format, ...);
 void Console_PrintNoEol(const char *format, ...);
 void Console_PrintNewLine(void);

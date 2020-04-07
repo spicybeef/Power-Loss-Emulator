@@ -30,17 +30,16 @@
 
 #include "console.h"
 
-static splash_t *consoleSplashScreen;
-static unsigned int consoleSplashLines;
-static consoleMenu_t *consoleMainMenu;
-static consoleSelection_t splashOptions[] = {{'m',"menus"},{'o',"options"}};
-static consoleSelection_t menuOptions[] = {{'t',"top"},{'u',"up"},{'q',"quit"}};
+static consoleSettings_t consoleSettings;
+
+static const consoleSelection_t splashOptions[] = {{'m',"menus"},{'o',"options"}};
+static const consoleSelection_t menuOptions[] = {{'t',"top"},{'u',"up"},{'q',"quit"}};
 
 void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu)
 {
-    consoleSplashScreen = splashScreen;
-    consoleSplashLines = splashLines;
-    consoleMainMenu = mainMenu;
+    consoleSettings->splashScreenPointer = splashScreen;
+    consoleSettings->numSplashLines = splashLines;
+    consoleSettings.mainMenuPointer = mainMenu;
 }
 
 void Console_Main(void)
@@ -52,16 +51,16 @@ void Console_Main(void)
         Console_PrintNewLine();
         Console_PrintNewLine();
         Console_PrintHeader("Welcome");
-        for(int line = 0; line < consoleSplashLines; line++)
+        for(int line = 0; line < consoleSettings->numSplashLines; line++)
         {
-            Console_Print("%s", (*consoleSplashScreen)[line]);
+            Console_Print("%s", (*(consoleSettings->splashScreenPointer))[line]);
         }
         selection = Console_PrintOptionsAndGetResponse(splashOptions, SELECTION_SIZE(splashOptions), 0);
         
         switch(selection)
         {
             case 'm':
-                Console_TraverseMenus(consoleMainMenu);
+                Console_TraverseMenus(consoleSettings.mainMenuPointer);
                 break;
             case 'o':
                 Console_Print(ANSI_COLOR_RED" Options not implemented."ANSI_COLOR_RESET);
@@ -148,7 +147,7 @@ void Console_TraverseMenus(consoleMenu_t *menu)
     while (stayPut);
 }
 
-char Console_PrintOptionsAndGetResponse(consoleSelection_t *selections, unsigned int numSelections, unsigned int numMenuSelections)
+char Console_PrintOptionsAndGetResponse(const consoleSelection_t selections[], unsigned int numSelections, unsigned int numMenuSelections)
 {
     // ToDo: Assert on number of menu selections greater than 10
     char c;
@@ -246,7 +245,7 @@ void Console_PrintHeader(char *headerString)
         stringLength = MAX_HEADER_TITLE_WIDTH;
     }
 
-    Console_PrintNoEol("=[ "ANSI_COLOR_YELLOW"%s"ANSI_COLOR_RESET" ]=", headerString);
+    Console_PrintNoEol("=["ANSI_COLOR_YELLOW" %s "ANSI_COLOR_RESET"]=", headerString);
     // Fill the rest of the line with '='
     for (int i = 0; i < (CONSOLE_WIDTH - stringLength - HEADER_TITLE_EXTRAS_WIDTH); i++)
     {
