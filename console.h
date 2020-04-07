@@ -93,7 +93,7 @@ typedef struct consoleSettings
     consoleMenu_t       *mainMenuPointer;
 } consoleSettings_t;
 
-void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu);
+void Console_Init(consoleSettings_t *settings);
 void Console_Main(void);
 
 void Console_WaitForKey(void);

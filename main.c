@@ -45,7 +45,13 @@ void main(void)
     Util_WaitMicroseconds(500);
     
     // Setup console interface
-    Console_Init(&splashScreen, NUM_SPLASH_LINES, &mainMenu);
+    consoleSettings_t consoleSettings = 
+    {
+        &splashScreen,
+        NUM_SPLASH_LINES,
+        &mainMenu,
+    }
+    Console_Init(&consoleSettings);
     // Erase screen
     Console_Print(ERASE_SCREEN);
     // Start console interface

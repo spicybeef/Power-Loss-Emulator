@@ -30,16 +30,14 @@
 
 #include "console.h"
 
-static consoleSettings_t consoleSettings;
+static consoleSettings_t *consoleSettings;
 
 static const consoleSelection_t splashOptions[] = {{'m',"menus"},{'o',"options"}};
 static const consoleSelection_t menuOptions[] = {{'t',"top"},{'u',"up"},{'q',"quit"}};
 
-void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu)
+void Console_Init(consoleSettings_t *settings)
 {
-    consoleSettings.splashScreenPointer = splashScreen;
-    consoleSettings.numSplashLines = splashLines;
-    consoleSettings.mainMenuPointer = mainMenu;
+    consoleSettings = settings;
 }
 
 void Console_Main(void)
@@ -51,16 +49,16 @@ void Console_Main(void)
         Console_PrintNewLine();
         Console_PrintNewLine();
         Console_PrintHeader("Welcome");
-        for(int line = 0; line < consoleSettings.numSplashLines; line++)
+        for(int line = 0; line < consoleSettings->numSplashLines; line++)
         {
-            Console_Print("%s", (*(consoleSettings.splashScreenPointer))[line]);
+            Console_Print("%s", (*(consoleSettings->splashScreenPointer))[line]);
         }
         selection = Console_PrintOptionsAndGetResponse(splashOptions, SELECTION_SIZE(splashOptions), 0);
         
         switch(selection)
         {
             case 'm':
-                Console_TraverseMenus(consoleSettings.mainMenuPointer);
+                Console_TraverseMenus(consoleSettings->mainMenuPointer);
                 break;
             case 'o':
                 Console_Print(ANSI_COLOR_RED" Options not implemented."ANSI_COLOR_RESET);
