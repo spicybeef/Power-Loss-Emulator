@@ -16,8 +16,8 @@ typedef enum
     SUCCESS =   0,
 } functionResult_e;
 
-#define NO_TOP_MENU                 NULL
-#define NO_FUNCTION_POINTER         NULL
+#define NO_TOP_MENU                 (0) // NULL
+#define NO_FUNCTION_POINTER         (0) // NULL
 #define MAX_MENU_NAME_LENGTH        (32)
 #define MAX_MENU_DESCRIPTION_LENGTH (32)
 
@@ -37,7 +37,7 @@ typedef struct consoleMenu
 {
     consoleMenuId_t     id;
     consoleMenuItem_t   *menuItems;
-    struct              *consoleMenu topMenu;
+    struct consoleMenu  *topMenu;
     unsigned int        menuLength;
 } consoleMenu_t;
 

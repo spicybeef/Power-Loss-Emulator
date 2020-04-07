@@ -8,6 +8,7 @@
 #include "init.h"
 #include "utils.h"
 #include "console.h"
+#include "menus.h"
 
 void main(void)
 {   

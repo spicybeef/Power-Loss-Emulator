@@ -1,6 +1,7 @@
 #include <xc.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "utils.h"
 
