@@ -39,7 +39,7 @@ consoleMenuItem_t subMenuItems[] =
     {{"Second", "The second submenu item"}, &subSubMenu,    NO_FUNCTION_POINTER},
     {{"Third",  "The third submenu item"},  &subSubMenu,    NO_FUNCTION_POINTER},
 };
-consoleMenu_t subMenu = {{"Sub Menu", "This is a submenu."}, subMenuItems, &mainMenu, MENU_SIZE(subMenuItems)};
+consoleMenu_t subMenu = {{"Sub Menu 1", "This is a submenu."}, subMenuItems, &mainMenu, MENU_SIZE(subMenuItems)};
 
 consoleMenuItem_t subSubMenuItems[] =
 {
@@ -47,4 +47,4 @@ consoleMenuItem_t subSubMenuItems[] =
     {{"Second", "The second subsubmenu item"}, NO_SUB_MENU,    NO_FUNCTION_POINTER},
     {{"Third",  "The third subsubmenu item"},  NO_SUB_MENU,    NO_FUNCTION_POINTER},
 };
-consoleMenu_t subSubMenu = {{"Sub Menu", "This is a submenu."}, subSubMenuItems, &subMenu, MENU_SIZE(subSubMenuItems)};
+consoleMenu_t subSubMenu = {{"Sub Menu 2", "This is a submenu."}, subSubMenuItems, &subMenu, MENU_SIZE(subSubMenuItems)};

@@ -24,6 +24,8 @@ typedef enum
 #define MAX_MENU_NAME_LENGTH        (32)
 #define MAX_MENU_DESCRIPTION_LENGTH (32)
 #define CONSOLE_WIDTH               (80)
+#define HEADER_TITLE_EXTRAS_WIDTH   (6) // "=[  ]=" = 6 characters
+#define MAX_HEADER_TITLE_WIDTH      (CONSOLE_WIDTH - HEADER_TITLE_EXTRAS_WIDTH) 
 
 typedef struct consoleMenuId
 {

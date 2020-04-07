@@ -217,15 +217,14 @@ void Console_PrintHeader(char *headerString)
 {
     unsigned int stringLength = strlen(headerString);
 
-    if (stringLength > CONSOLE_WIDTH)
+    if (stringLength > MAX_HEADER_TITLE_WIDTH)
     {
-        stringLength = CONSOLE_WIDTH;
-        headerString[CONSOLE_WIDTH] = 0;
+        stringLength = MAX_HEADER_TITLE_WIDTH;
     }
 
     Console_PrintNoEol("=[ "ANSI_COLOR_YELLOW"%s"ANSI_COLOR_RESET" ]=", headerString);
     // Fill the rest of the line with '='
-    for (int i = 0; i < (CONSOLE_WIDTH - stringLength - 6); i++)
+    for (int i = 0; i < (CONSOLE_WIDTH - stringLength - HEADER_TITLE_EXTRAS_WIDTH); i++)
     {
         Console_PutChar('=');
     }
