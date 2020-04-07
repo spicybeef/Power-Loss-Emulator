@@ -1,9 +1,48 @@
 #include "menus.h"
 
+splash_t splashScreen =
+{
+    ANSI_COLOR_RED,                        
+    "  ███████   ███       ████████  ",
+    "  ████████  ███       ████████  ",
+    "  ██▓  ███  ██▓       ██▓       ",
+    "  ▓█▓  █▓█  ▓█▓       ▓█▓       ",
+    "  █▓██▓█▓   █▓▓       █▓▓▓░▓    ",
+    "  ▓▓█▓▓▓    ▓▓▓       ▓▓▓▓▓░    ",
+    "  ▓▓░       ▓▓░       ▓▓░       ",
+    "  ░▓░       ░▓░       ░▓░       ",
+    "  ░░        ░░ ░░░░   ░░ ░░░░   ",
+    "  ░         ░ ░░ ░ ░  ░ ░░ ░░   ",
+    "                                ",
+    ANSI_COLOR_RESET,
+    "   Power Loss Emulator",
+};
+
+// All menus need to be externed up here
+extern consoleMenu_t mainMenu;
+extern consoleMenu_t subMenu;
+extern consoleMenu_t subSubMenu;
+
 consoleMenuItem_t mainMenuItems[] = 
 {
-    {{"First",  "The first menu item"},     NO_FUNCTION_POINTER},
-    {{"Second", "The second menu item"},    NO_FUNCTION_POINTER},
-    {{"Third",  "The third menu item"},     NO_FUNCTION_POINTER},
+    {{"First",  "The first menu item"},     &subMenu,       NO_FUNCTION_POINTER},
+    {{"Second", "The second menu item"},    &subMenu,       NO_FUNCTION_POINTER},
+    {{"Third",  "The third menu item"},     &subMenu,       NO_FUNCTION_POINTER},
 };
-consoleMenu_t mainMenu = {{"Main Menu", ""}, mainMenuItems, NO_TOP_MENU, MENU_LENGTH(mainMenuItems)};
+consoleMenu_t mainMenu = {{"Main Menu", "This is the main menu."}, mainMenuItems, NO_TOP_MENU, MENU_SIZE(mainMenuItems)};
+
+consoleMenuItem_t subMenuItems[] =
+{
+    {{"First",  "The first submenu item"},  &subSubMenu,    NO_FUNCTION_POINTER},
+    {{"Second", "The second submenu item"}, &subSubMenu,    NO_FUNCTION_POINTER},
+    {{"Third",  "The third submenu item"},  &subSubMenu,    NO_FUNCTION_POINTER},
+};
+consoleMenu_t subMenu = {{"Sub Menu", "This is a submenu."}, subMenuItems, &mainMenu, MENU_SIZE(subMenuItems)};
+
+consoleMenuItem_t subSubMenuItems[] =
+{
+    {{"First",  "The first subsubmenu item"},  NO_SUB_MENU,    NO_FUNCTION_POINTER},
+    {{"Second", "The second subsubmenu item"}, NO_SUB_MENU,    NO_FUNCTION_POINTER},
+    {{"Third",  "The third subsubmenu item"},  NO_SUB_MENU,    NO_FUNCTION_POINTER},
+};
+consoleMenu_t subSubMenu = {{"Sub Menu", "This is a submenu."}, subSubMenuItems, &subMenu, MENU_SIZE(subSubMenuItems)};

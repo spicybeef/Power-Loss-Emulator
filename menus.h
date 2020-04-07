@@ -3,6 +3,9 @@
 
 #include "console.h"
 
+#define NUM_SPLASH_LINES (14)
+
+extern splash_t splashScreen;
 extern consoleMenu_t mainMenu;
 
 #endif // MENUS_H

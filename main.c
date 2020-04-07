@@ -12,28 +12,24 @@
 
 void main(void)
 {   
-    char ioBuff[128] = {0};
-    
     Init_System();
     Init_Gpio();
     Init_Timer0();
     Init_Eusart1();
     
     // Wait a bit for things to stabilize
-    Util_WaitMicroseconds(1000);
+    Util_WaitMicroseconds(500);
     
-    printf("\r\nHello there! What's the string?\r\n");
-    scanf("%s", ioBuff);
-    printf("I think %s is a pretty cool string too.\r\n", ioBuff);
-
-    Console_PrintMenu(&mainMenu);
+    // Setup console interface
+    Console_Init(&splashScreen, NUM_SPLASH_LINES, &mainMenu);
+    // Erase screen
+    Console_Print(ERASE_SCREEN);
+    // Start console interface
+    Console_Main(); // Does not return
     
-    for (;;)
-    {
-        // Generate a pulse
-        Util_GeneratePulse();
-        // Wait 100us
-        Util_WaitMicroseconds(100);
-    }
+    // Unreachable code.
+    // SO STUPID: In order for vprintf to work, you need to have a printf with
+    // the formats, otherwise the XC8 compiler doesn't build in support for it.
+    printf("%c%s%d",0,0,0);
 }
 

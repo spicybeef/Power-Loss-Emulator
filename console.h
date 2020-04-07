@@ -9,6 +9,7 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
+#define ERASE_SCREEN       "\x1b[2J"
 
 typedef enum
 {
@@ -17,9 +18,12 @@ typedef enum
 } functionResult_e;
 
 #define NO_TOP_MENU                 (0) // NULL
+#define NO_SUB_MENU                 (0) // NULL
 #define NO_FUNCTION_POINTER         (0) // NULL
+#define NO_ARGS                     (0) // NULL
 #define MAX_MENU_NAME_LENGTH        (32)
 #define MAX_MENU_DESCRIPTION_LENGTH (32)
+#define CONSOLE_WIDTH               (80)
 
 typedef struct consoleMenuId
 {
@@ -30,6 +34,7 @@ typedef struct consoleMenuId
 typedef struct consoleMenuItem
 {
     consoleMenuId_t     id;
+    struct consoleMenu  *subMenu;
     functionResult_e    (*functionPointer)(unsigned int numArgs, int[]);
 } consoleMenuItem_t;
 
@@ -41,8 +46,31 @@ typedef struct consoleMenu
     unsigned int        menuLength;
 } consoleMenu_t;
 
-#define MENU_LENGTH(x) sizeof(x)/sizeof(consoleMenuItem_t)
+typedef struct consoleSelection
+{
+    char                key;
+    const char          *description;
+} consoleSelection_t;
 
+#define MENU_SIZE(x)        sizeof(x)/sizeof(consoleMenuItem_t)
+#define SELECTION_SIZE(x)   sizeof(x)/sizeof(consoleSelection_t)
+
+// User should define a splash screen as an as array of const pointer to const char.
+typedef const char *const splash_t[];
+
+void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu);
+void Console_Main(void);
+
+
+void Console_WaitForKey(void);
+
+void Console_TraverseMenus(consoleMenu_t *menu);
+char Console_PrintOptionsAndGetResponse(consoleSelection_t *selections, unsigned int numSelections, unsigned int numMenuSelections);
+void Console_Print(const char *format, ...);
+void Console_PrintNoEol(const char *format, ...);
+void Console_PrintNewLine(void);
+void Console_PrintHeader(char *headerString);
+void Console_PrintDivider(void);
 void Console_PrintMenu(consoleMenu_t *menu);
 
 #endif // CONSOLE_H

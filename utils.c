@@ -11,9 +11,9 @@ void putch(char c)
     TXREG1 = c; // Load character into transmit shift register
 }
 
-int getch(void)
+char getch(void)
 {
-    int c;
+    char c;
     
     while (!RCIF); // Wait for data to be received
     c = (char)RCREG1;
@@ -21,9 +21,9 @@ int getch(void)
     return c;
 }
 
-int getche(void)
+char getche(void)
 {
-    int c;
+    char c;
     
     c = getch();
     putch(c);
