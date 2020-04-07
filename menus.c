@@ -16,6 +16,8 @@ splash_t splashScreen =
     "                                ",
     ANSI_COLOR_RESET,
     "   Power Loss Emulator",
+    "   Build Date: "__DATE__" "__TIME__"",
+    "",
 };
 
 // All menus need to be externed up here
