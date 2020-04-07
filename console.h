@@ -51,14 +51,11 @@ typedef enum
 #define HEADER_TITLE_EXTRAS_WIDTH   (6) // "=[  ]=" = 6 characters
 #define MAX_HEADER_TITLE_WIDTH      (CONSOLE_WIDTH - HEADER_TITLE_EXTRAS_WIDTH) 
 
-typedef struct consoleSettings
-{
-    // Splash screen settings
-    splash_t            *splashScreenPointer;
-    unsigned int        numSplashLines;
-    // Pointer to the main menu
-    consoleMenu_t       *mainMenuPointer;
-} consoleSettings_t;
+#define MENU_SIZE(x)                sizeof(x)/sizeof(consoleMenuItem_t)
+#define SELECTION_SIZE(x)           sizeof(x)/sizeof(consoleSelection_t)
+
+// User should define a splash screen as an as array of const pointer to const char.
+typedef const char *const splash_t[];
 
 typedef struct consoleMenuId
 {
@@ -87,18 +84,19 @@ typedef struct consoleSelection
     const char          *description;
 } consoleSelection_t;
 
-#define MENU_SIZE(x)        sizeof(x)/sizeof(consoleMenuItem_t)
-#define SELECTION_SIZE(x)   sizeof(x)/sizeof(consoleSelection_t)
-
-// User should define a splash screen as an as array of const pointer to const char.
-typedef const char *const splash_t[];
+typedef struct consoleSettings
+{
+    // Splash screen settings
+    splash_t            *splashScreenPointer;
+    unsigned int        numSplashLines;
+    // Pointer to the main menu
+    consoleMenu_t       *mainMenuPointer;
+} consoleSettings_t;
 
 void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu);
 void Console_Main(void);
 
-
 void Console_WaitForKey(void);
-
 void Console_TraverseMenus(consoleMenu_t *menu);
 char Console_PrintOptionsAndGetResponse(const consoleSelection_t selections[], unsigned int numSelections, unsigned int numMenuSelections);
 void Console_Print(const char *format, ...);

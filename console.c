@@ -37,8 +37,8 @@ static const consoleSelection_t menuOptions[] = {{'t',"top"},{'u',"up"},{'q',"qu
 
 void Console_Init(splash_t *splashScreen, unsigned int splashLines, consoleMenu_t *mainMenu)
 {
-    consoleSettings->splashScreenPointer = splashScreen;
-    consoleSettings->numSplashLines = splashLines;
+    consoleSettings.splashScreenPointer = splashScreen;
+    consoleSettings.numSplashLines = splashLines;
     consoleSettings.mainMenuPointer = mainMenu;
 }
 
@@ -51,9 +51,9 @@ void Console_Main(void)
         Console_PrintNewLine();
         Console_PrintNewLine();
         Console_PrintHeader("Welcome");
-        for(int line = 0; line < consoleSettings->numSplashLines; line++)
+        for(int line = 0; line < consoleSettings.numSplashLines; line++)
         {
-            Console_Print("%s", (*(consoleSettings->splashScreenPointer))[line]);
+            Console_Print("%s", (*(consoleSettings.splashScreenPointer))[line]);
         }
         selection = Console_PrintOptionsAndGetResponse(splashOptions, SELECTION_SIZE(splashOptions), 0);
         
@@ -114,7 +114,6 @@ void Console_TraverseMenus(consoleMenu_t *menu)
         // Check if we're traversing up
         else if (selection == 'u')
         {
-            Console_Print(ANSI_COLOR_GREEN" Going up!"ANSI_COLOR_RESET);
             // Go up if we can
             if (currentMenu->topMenu != NO_TOP_MENU)
             {
@@ -124,7 +123,6 @@ void Console_TraverseMenus(consoleMenu_t *menu)
         // Check if we're traversing to top
         else if (selection == 't')
         {
-            Console_Print(ANSI_COLOR_GREEN" Going to the top!"ANSI_COLOR_RESET);
             // Go up until we hit top menu
             while (currentMenu->topMenu != NO_TOP_MENU)
             {
@@ -135,7 +133,6 @@ void Console_TraverseMenus(consoleMenu_t *menu)
         // Check if we're quitting
         else if (selection == 'q')
         {
-            Console_Print(ANSI_COLOR_GREEN" Quitting!"ANSI_COLOR_RESET);
             stayPut = false;
         }
         else
