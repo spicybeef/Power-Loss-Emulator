@@ -161,7 +161,12 @@ void Util_ToggleRB0(void)
     LATBbits.LATB0 ^= 1;
 }
 
-void Util_WaitMicroseconds(uint16_t microseconds)
+uint32_t Util_GetMicrosecondUptime(void)
+{
+    return uptimeTicksMicroSeconds;
+}
+
+void Util_WaitMicrosecond(uint16_t microseconds)
 {
     uint32_t startTime;
     uint32_t currentTime;

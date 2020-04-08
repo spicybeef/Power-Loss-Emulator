@@ -35,6 +35,7 @@ extern uint32_t uptimeTicksMicroSeconds;
 void Util_GeneratePulseRB0(void);
 void Util_SetNewCompareValue(uint16_t desiredPeriod);
 void Util_ToggleRB0(void);
-void Util_WaitMicroseconds(uint16_t microseconds);
+uint32_t Util_GetMicrosecondUptime(void);
+void Util_WaitMicrosecond(uint16_t microseconds);
 
 #endif // UTILS_H

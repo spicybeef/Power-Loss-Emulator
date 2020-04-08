@@ -46,7 +46,7 @@ void main(void)
     Init_Interrupts();
 
     // Wait a bit for things to stabilize
-    Util_WaitMicroseconds(50);
+    Util_WaitMicrosecond(50);
     
     // Initialize program variables
     PowerLossEmu_Init();

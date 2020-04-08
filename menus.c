@@ -51,7 +51,6 @@ extern consoleMenu_t mainMenu;
 consoleMenuItem_t mainMenuItems[] = 
 {
     {{"Setup",  "Setup power-loss emulation parameters"},   NO_SUB_MENU,    PowerLossEmu_Setup},
-    {{"Trim PLL",  "Trim the 96MHz PLL"},                   NO_SUB_MENU,    PowerLossEmu_TrimPll},
     {{"Current",  "Display current power-loss parameters"}, NO_SUB_MENU,    PowerLossEmu_CurrentSettings},
     {{"Run", "Run power-loss emulation workload"},          NO_SUB_MENU,    PowerLossEmu_RunWorkload},
 };

@@ -24,6 +24,7 @@
 
 #include <xc.h>
 #include <stdint.h>
+#include <math.h>
 
 #include "utils.h"
 #include "powerlossemu.h"
@@ -32,49 +33,77 @@ static uint16_t startPeriod;
 static uint16_t endPeriod;
 static uint16_t rampPeriod;
 static uint16_t rampSteps;
+static uint16_t rampStepSize;
 static uint16_t workloadLength;
+static workloadType_e workloadType;
+
+static arrayOfStrings_t workloadStrings =
+{
+    ANSI_COLOR_CYAN"Sawtooth-Up"ANSI_COLOR_RESET,
+    ANSI_COLOR_CYAN"Sawtooth-Down"ANSI_COLOR_RESET,
+    ANSI_COLOR_CYAN"Sine"ANSI_COLOR_RESET,
+    ANSI_COLOR_CYAN"Square"ANSI_COLOR_RESET,
+};
 
 void PowerLossEmu_Init(void)
 {
-    startPeriod = 100;
-    endPeriod = 500;
+    startPeriod = 500;
+    endPeriod = 100;
     rampPeriod = 1000;
     rampSteps = 10;
+    // Calculate step size
+    if (startPeriod > endPeriod)
+    {
+        rampStepSize = (startPeriod - endPeriod)/rampSteps;
+    }
+    else
+    {
+        rampStepSize = (endPeriod - startPeriod)/rampSteps;
+    }
     workloadLength = 30;
-}
-
-functionResult_e PowerLossEmu_TrimPll(unsigned int numArgs, int args[])
-{
-    Console_Print("Current setting: %6d (0x%02x)", OSCTUNEbits.TUN, OSCTUNEbits.TUN);
-    // OSCTUNEbits.TUN is 6 bits
-    // bit 5-0 TUN<5:0>: Frequency Tuning bits
-    // 0b011111 = Maximum frequency
-    // 0b011110
-    // .
-    // .
-    // .
-    // 0b000001
-    // 0b000000 = Center frequency; oscillator module is running at the calibrated frequency
-    // 0b111111
-    // .
-    // .
-    // .
-    // 0b100000 = Minimum frequency
-    OSCTUNEbits.TUN = (0x3F)&Console_PromptForInt("Enter new trim: ");
-    
-    return SUCCESS;
+    workloadType = WORKLOAD_SAWTOOTH_DOWN;
 }
 
 functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[])
 {
-    
+    uint16_t tempPeriod;
+
     PowerLossEmu_CurrentSettings(0, 0);
     
     startPeriod = Console_PromptForInt("Enter starting period (us): ");
+    tempPeriod = startPeriod;
     endPeriod = Console_PromptForInt("Enter ending period (us): ");
     rampPeriod = Console_PromptForInt("Enter ramp period (ms): ");
     rampSteps = Console_PromptForInt("Enter number of ramp steps: ");
     workloadLength = Console_PromptForInt("Enter length of workload (s): ");
+
+    Console_Print("Choose a workload setting");
+    Console_Print("[0]-sawtooth-up, [1]-sawtooth-down [2]-sine [3]-square");
+    workloadType = (workloadType_e)((0x3)&Console_PromptForInt("Enter workload type: "));
+
+    // Calculate step size
+    if (startPeriod > endPeriod)
+    {
+        rampStepSize = (startPeriod - endPeriod)/rampSteps;
+    }
+    else
+    {
+        rampStepSize = (endPeriod - startPeriod)/rampSteps;
+    }
+
+    // For some workloads, swap periods if they don't make sense
+    if (((workloadType == WORKLOAD_SAWTOOTH_UP) || (workloadType == WORKLOAD_SINE)) && (startPeriod > endPeriod))
+    {
+        Console_Print("Swapping periods");
+        startPeriod = endPeriod;
+        endPeriod = tempPeriod;
+    }
+    else if ((workloadType == WORKLOAD_SAWTOOTH_DOWN) && (startPeriod < endPeriod))
+    {
+        Console_Print("Swapping periods");
+        startPeriod = endPeriod;
+        endPeriod = tempPeriod;
+    }
 
     PowerLossEmu_CurrentSettings(0, 0);
     
@@ -84,60 +113,110 @@ functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[])
 functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[])
 {
     Console_Print("Current power loss emulation settings:");
-    Console_Print("Start period:    %6d us (0x%04x)", startPeriod, startPeriod);
-    Console_Print("End period:      %6d us (0x%04x)", endPeriod, endPeriod);
-    Console_Print("Ramp period:     %6d ms (0x%04x)", rampPeriod, rampPeriod);
+    Console_Print("Start period:    %6d us", startPeriod);
+    Console_Print("End period:      %6d us", endPeriod);
+    Console_Print("Ramp period:     %6d ms", rampPeriod);
     Console_Print("Ramp steps:      %6d", rampSteps, rampSteps);
-    Console_Print("Ramp step size:  %6d", (endPeriod - startPeriod)/rampSteps);
+    if ((workloadType == WORKLOAD_SAWTOOTH_UP) || (workloadType == WORKLOAD_SAWTOOTH_DOWN))
+    {
+        Console_Print("Ramp step size:  %6d", rampStepSize);
+    }
     Console_Print("Workload length: %6d s", workloadLength);
-    
+    Console_Print("Workload type:   %s", workloadStrings[(uint8_t)workloadType]);
+
     return SUCCESS;
 }
 
 functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[])
 {
     uint16_t currentPeriod = startPeriod;
-    uint16_t rampStepSize = (endPeriod - startPeriod)/rampSteps;
-    uint32_t periodElapsedTime = 0;
-    uint32_t totalElapsedTime = 0;
-    uint32_t progressElapsedTime = 0;
+    uint32_t workloadStartTime;
+    uint32_t periodStartTime;
+    uint32_t progressStartTime;
+    uint32_t currentTime;
+    uint8_t currentStep = 1;
+    float sineStep;
 
+    PowerLossEmu_CurrentSettings(0, 0);
     Console_Print("Workload will pulse RB0, running...");
-    Util_SetNewCompareValue(startPeriod);
+
+    // Sine workload starts off differently.
+    if (workloadType == WORKLOAD_SINE)
+    {
+        sineStep = ((float)currentStep)/((float)rampSteps);
+        currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5*sinf(2.0*M_PI*sineStep)));
+    }
+
+    workloadStartTime = Util_GetMicrosecondUptime();
+    periodStartTime = workloadStartTime;
+    progressStartTime = workloadStartTime;
     for(;;)
     {
-        Util_WaitMicroseconds(currentPeriod);
-
-        // Increment our time trackers
-        periodElapsedTime += currentPeriod;
-        totalElapsedTime += currentPeriod;
-        progressElapsedTime += currentPeriod;
-        
+        currentTime = Util_GetMicrosecondUptime();
         // Check if we have to move to a new period step
-        if (((periodElapsedTime / MICROSECONDS_IN_MILLISECONDS) >= rampPeriod) && rampPeriod != 0)
+        if ((((currentTime - periodStartTime) / MICROSECONDS_IN_MILLISECONDS) >= rampPeriod) && rampPeriod != 0)
         {
-            // Increment our current period by the step size
-            currentPeriod += rampStepSize;
-            // Check if we're past max
-            if (currentPeriod > endPeriod)
+            switch (workloadType)
             {
-                // Go back to the beginning
-                currentPeriod = startPeriod;
+                case WORKLOAD_SAWTOOTH_UP:
+                    // Increment our current period by the step size
+                    currentPeriod += rampStepSize;
+                    // Check if we're past max
+                    if (currentPeriod > endPeriod)
+                    {
+                        // Go back to the beginning
+                        currentPeriod = startPeriod;
+                    }
+                    break;
+                case WORKLOAD_SAWTOOTH_DOWN:
+                    // Increment our current period by the step size
+                    currentPeriod -= rampStepSize;
+                    // Check if we're past max
+                    if (currentPeriod < endPeriod)
+                    {
+                        // Go back to the beginning
+                        currentPeriod = startPeriod;
+                    }
+                    break;
+                case WORKLOAD_SINE:
+                    sineStep = ((float)currentStep)/((float)rampSteps);
+                    currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5*sinf(2.0*M_PI*sineStep)));
+                    break;
+                case WORKLOAD_SQUARE:
+                    if (currentPeriod == startPeriod)
+                    {
+                        currentPeriod = endPeriod;
+                    }
+                    else
+                    {
+                        currentPeriod = startPeriod;
+                    }
+                    break;
+                default:
+                    break;
             }
+            // Reset the period
+            periodStartTime = Util_GetMicrosecondUptime();
             // Update the comparator
             Util_SetNewCompareValue(currentPeriod);
-            periodElapsedTime = 0;
+            // Increment the step
+            currentStep++;
+            // Check if we rolled over
+            if (currentStep > rampSteps)
+            {
+                currentStep = 1;
+            }
         }
         
         // Print progress every seconds
-        if ((progressElapsedTime / MICROSECONDS_IN_SECONDS) > 0)
+        if (((currentTime - progressStartTime) / MICROSECONDS_IN_SECONDS) > 0)
         {
-            progressElapsedTime = 0;
             Console_PrintNoEol(".");
+            progressStartTime = Util_GetMicrosecondUptime();
         }
         
         // // Check if we're done our workload
-        if ((totalElapsedTime / MICROSECONDS_IN_SECONDS) >= workloadLength)
+        if (((currentTime - workloadStartTime) / MICROSECONDS_IN_SECONDS) >= workloadLength)
         {
             Console_PrintNewLine();
             break;

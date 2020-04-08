@@ -27,8 +27,17 @@
 
 #include "console.h"
 
+typedef enum
+{
+    WORKLOAD_SAWTOOTH_UP = 0,
+    WORKLOAD_SAWTOOTH_DOWN = 1,
+    WORKLOAD_SINE = 2,
+    WORKLOAD_SQUARE = 3,
+} workloadType_e;
+
+typedef const char *const arrayOfStrings_t[];
+
 void PowerLossEmu_Init(void);
-functionResult_e PowerLossEmu_TrimPll(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[]);
