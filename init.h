@@ -28,6 +28,11 @@
 void Init_System(void);
 void Init_Gpio(void);
 void Init_Timer0(void);
+void Init_Timer1(void);
+void Init_Timer2(void);
+void Init_Timer3(void);
+void Init_Eccp1(void);
 void Init_Eusart1(void);
+void Init_Interrupts(void);
 
 #endif // INIT_H

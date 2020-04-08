@@ -45,8 +45,8 @@ typedef enum
 #define NO_SUB_MENU                 (0) // NULL
 #define NO_FUNCTION_POINTER         (0) // NULL
 #define NO_ARGS                     (0) // NULL
-#define MAX_MENU_NAME_LENGTH        (32)
-#define MAX_MENU_DESCRIPTION_LENGTH (32)
+#define MAX_MENU_NAME_LENGTH        (16)
+#define MAX_MENU_DESCRIPTION_LENGTH (48)
 #define CONSOLE_WIDTH               (80)
 #define HEADER_TITLE_EXTRAS_WIDTH   (6) // "=[  ]=" = 6 characters
 #define MAX_HEADER_TITLE_WIDTH      (CONSOLE_WIDTH - HEADER_TITLE_EXTRAS_WIDTH) 
@@ -67,7 +67,7 @@ typedef struct consoleMenuItem
 {
     consoleMenuId_t     id;
     struct consoleMenu  *subMenu;
-    functionResult_e    (*functionPointer)(unsigned int numArgs, int[]);
+    functionResult_e    (*functionPointer)(unsigned int, int[]);
 } consoleMenuItem_t;
 
 typedef struct consoleMenu
@@ -96,7 +96,9 @@ typedef struct consoleSettings
 void Console_Init(consoleSettings_t *settings);
 void Console_Main(void);
 
-void Console_WaitForKey(void);
+void Console_PromptForAnyKeyBlocking(void);
+char Console_CheckForKey(void);
+unsigned int Console_PromptForInt(const char *prompt);
 void Console_TraverseMenus(consoleMenu_t *menu);
 char Console_PrintOptionsAndGetResponse(const consoleSelection_t selections[], unsigned int numSelections, unsigned int numMenuSelections);
 void Console_Print(const char *format, ...);

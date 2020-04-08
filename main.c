@@ -33,24 +33,31 @@
 #include "utils.h"
 #include "console.h"
 #include "menus.h"
+#include "powerlossemu.h"
 
 void main(void)
 {   
     Init_System();
     Init_Gpio();
-    Init_Timer0();
+    Init_Timer2();
+    Init_Timer3();
+    Init_Eccp1();
     Init_Eusart1();
-    
+    Init_Interrupts();
+
     // Wait a bit for things to stabilize
-    Util_WaitMicroseconds(500);
+    Util_WaitMicroseconds(50);
     
+    // Initialize program variables
+    PowerLossEmu_Init();
+
     // Setup console interface
     consoleSettings_t consoleSettings = 
     {
         &splashScreen,
         NUM_SPLASH_LINES,
         &mainMenu,
-    }
+    };
     Console_Init(&consoleSettings);
     // Erase screen
     Console_Print(ERASE_SCREEN);
@@ -60,6 +67,6 @@ void main(void)
     // Unreachable code.
     // SO STUPID: In order for vprintf to work, you need to have a printf with
     // the formats, otherwise the XC8 compiler doesn't build in support for it.
-    printf("%c%s%d",0,0,0);
+    printf("%c%s%d%x%lu",0,0,0,0,0L);
 }
 

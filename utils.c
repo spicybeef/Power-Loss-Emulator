@@ -29,6 +29,8 @@
 
 #include "utils.h"
 
+uint32_t uptimeTicksMicroSeconds;
+
 void putch(char c)
 {
     while (!TXIF); // Wait until peripheral is free
@@ -123,25 +125,51 @@ int scanf(const char *format, ...)
     return ret;
 }
 
-void Util_GeneratePulse(void)
+void Util_GeneratePulseRB0(void)
 {
-    // The following generates an approximately 1us pulse
     LATBbits.LATB0 = 1;
+    NOP();
+    NOP();
+    NOP();
+    NOP();
+    NOP();
     NOP();
     NOP();
     NOP();
     LATBbits.LATB0 = 0;
 }
 
+void Util_SetNewCompareValue(uint16_t desiredPeriod)
+{
+    if (desiredPeriod == 0)
+    {
+        // Disable comparator
+        CCP1CONbits.CCP1M = 0x0;    // 0b0000 = Capture/Compare/PWM off (resets ECCPx module)
+        CCPR1 = 0;                  // Compare off for now
+    }
+    else
+    {
+        // Enable comparator
+        CCP1CONbits.CCP1M = 0xB;    // 0b1011 = Compare mode, trigger special event (ECCPx resets TMR1 or TMR3, starts A/D conversion, sets CCxIF bit)
+        // 1 us for every 12 ticks
+        CCPR1 = desiredPeriod * 12;
+    }
+}
+
+void Util_ToggleRB0(void)
+{
+    LATBbits.LATB0 ^= 1;
+}
+
 void Util_WaitMicroseconds(uint16_t microseconds)
 {
-    uint16_t startTime;
-    uint16_t current;
-    
-    startTime = TMR0;
+    uint32_t startTime;
+    uint32_t currentTime;
+
+    startTime = uptimeTicksMicroSeconds;
     do
     {
-        current = TMR0;
+        currentTime = uptimeTicksMicroSeconds;
     }
-    while ((current - startTime)<100);
+    while ((currentTime - startTime) < microseconds);
 }

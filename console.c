@@ -71,10 +71,26 @@ void Console_Main(void)
     }
 }
 
-void Console_WaitForKey(void)
+unsigned int Console_PromptForInt(const char *prompt)
+{
+    unsigned int input;
+
+    Console_PrintNoEol("%s ", prompt);
+    scanf("%d", &input);
+    Console_PrintNewLine();
+
+    return input;
+}
+
+void Console_PromptForAnyKeyBlocking(void)
 {
     Console_Print("Press any key to continue");
     getch();
+}
+
+char Console_CheckForKey(void)
+{
+    return 0;
 }
 
 void Console_TraverseMenus(consoleMenu_t *menu)
@@ -199,6 +215,7 @@ char Console_PrintOptionsAndGetResponse(const consoleSelection_t selections[], u
     
     Console_Print(ANSI_COLOR_GREEN" Selecting %c!"ANSI_COLOR_RESET, c);
     Console_PrintDivider();
+    Console_PrintNewLine();
     
     return c;
 }

@@ -22,19 +22,15 @@
  * SOFTWARE.
  ******************************************************************************/
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef POWERLOSSEMU_H
+#define POWERLOSSEMU_H
 
-#include <stdint.h>
+#include "console.h"
 
-#define MICROSECONDS_IN_SECONDS         (1000000)
-#define MICROSECONDS_IN_MILLISECONDS    (1000)
+void PowerLossEmu_Init(void);
+functionResult_e PowerLossEmu_TrimPll(unsigned int numArgs, int args[]);
+functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[]);
+functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[]);
+functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[]);
 
-extern uint32_t uptimeTicksMicroSeconds;
-
-void Util_GeneratePulseRB0(void);
-void Util_SetNewCompareValue(uint16_t desiredPeriod);
-void Util_ToggleRB0(void);
-void Util_WaitMicroseconds(uint16_t microseconds);
-
-#endif // UTILS_H
+#endif // POWERLOSSEMU_H

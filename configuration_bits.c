@@ -32,7 +32,7 @@
 #pragma config XINST = OFF      // Extended Instruction Set (Disabled)
 
 // CONFIG1H
-#pragma config CPUDIV = OSC3_PLL3// CPU System Clock Postscaler (CPU system clock divide by 3)
+#pragma config CPUDIV = OSC1    // CPU System Clock Postscaler (No CPU system clock divide)
 #pragma config CP0 = OFF        // Code Protect (Program memory is not code-protected)
 
 // CONFIG2L
@@ -63,5 +63,6 @@
 
 // CONFIG4H
 #pragma config WPDIS = OFF      // Write Protect Disable bit (WPFP<5:0>/WPEND region ignored)
+
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.

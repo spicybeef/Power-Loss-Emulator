@@ -23,6 +23,7 @@
  ******************************************************************************/
 
 #include "menus.h"
+#include "powerlossemu.h"
 
 splash_t splashScreen =
 {
@@ -46,29 +47,12 @@ splash_t splashScreen =
 
 // All menus need to be externed up here
 extern consoleMenu_t mainMenu;
-extern consoleMenu_t subMenu;
-extern consoleMenu_t subSubMenu;
 
 consoleMenuItem_t mainMenuItems[] = 
 {
-    {{"First",  "The first menu item"},     &subMenu,       NO_FUNCTION_POINTER},
-    {{"Second", "The second menu item"},    &subMenu,       NO_FUNCTION_POINTER},
-    {{"Third",  "The third menu item"},     &subMenu,       NO_FUNCTION_POINTER},
+    {{"Setup",  "Setup power-loss emulation parameters"},   NO_SUB_MENU,    PowerLossEmu_Setup},
+    {{"Trim PLL",  "Trim the 96MHz PLL"},                   NO_SUB_MENU,    PowerLossEmu_TrimPll},
+    {{"Current",  "Display current power-loss parameters"}, NO_SUB_MENU,    PowerLossEmu_CurrentSettings},
+    {{"Run", "Run power-loss emulation workload"},          NO_SUB_MENU,    PowerLossEmu_RunWorkload},
 };
 consoleMenu_t mainMenu = {{"Main Menu", "This is the main menu."}, mainMenuItems, NO_TOP_MENU, MENU_SIZE(mainMenuItems)};
-
-consoleMenuItem_t subMenuItems[] =
-{
-    {{"First",  "The first submenu item"},  &subSubMenu,    NO_FUNCTION_POINTER},
-    {{"Second", "The second submenu item"}, &subSubMenu,    NO_FUNCTION_POINTER},
-    {{"Third",  "The third submenu item"},  &subSubMenu,    NO_FUNCTION_POINTER},
-};
-consoleMenu_t subMenu = {{"Sub Menu 1", "This is a submenu."}, subMenuItems, &mainMenu, MENU_SIZE(subMenuItems)};
-
-consoleMenuItem_t subSubMenuItems[] =
-{
-    {{"First",  "The first subsubmenu item"},  NO_SUB_MENU,    NO_FUNCTION_POINTER},
-    {{"Second", "The second subsubmenu item"}, NO_SUB_MENU,    NO_FUNCTION_POINTER},
-    {{"Third",  "The third subsubmenu item"},  NO_SUB_MENU,    NO_FUNCTION_POINTER},
-};
-consoleMenu_t subSubMenu = {{"Sub Menu 2", "This is a submenu."}, subSubMenuItems, &subMenu, MENU_SIZE(subSubMenuItems)};

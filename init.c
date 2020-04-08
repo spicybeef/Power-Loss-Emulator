@@ -53,11 +53,50 @@ void Init_Gpio(void)
 
 void Init_Timer0(void)
 {
+    // (48 MHz)/(4 FOSC)/(4 PRESCALER) = 3 MHz tick rate
     T0CONbits.T0CS = 0;     // Internal clock (FOSC /4)
     T0CONbits.PSA = 0;      // Use prescaler
     T0CONbits.T0PS = 0x1;   // Use a prescaler value of 4 (0b001) to get a timer frequency of 1 MHz
     T0CONbits.T08BIT = 0;   // 16-bit counter mode
     T0CONbits.TMR0ON = 1;   // Enable timer
+}
+
+void Init_Timer1(void)
+{
+    // (48 MHz)/(4 FOSC) = 12 MHz tick rate
+    T1CONbits.TMR1CS = 0x0; // 0b00 = Timer1 clock source is the instruction clock (FOSC /4)
+    T1CONbits.T1CKPS = 0x0; // 0b00 = 1:1 Prescale value
+    T1CONbits.T1OSCEN = 0;  // 0b0 = Timer1 crystal driver is off
+    T1CONbits.RD16 = 1;     // 0b1 = Enables register read/write of Timer1 in one 16-bit operation
+    T1CONbits.TMR1ON = 1;   // 0b0 = Timer1 crystal driver is off
+}
+
+void Init_Timer2(void)
+{
+    // (48 MHz)/(4 FOSC) = 12 MHz tick rate
+    T2CONbits.T2OUTPS = 0x0;// 0b0000 = 1:1 Postscale
+    T2CONbits.T2CKPS = 0x0; // 0b00 = Prescaler is 1
+    PR2 = 120;              // 12 ticks = 1 us compare rate
+    T2CONbits.TMR2ON = 1;   // 0b1 = Timer2 is on
+    PIE1bits.TMR2IE = 1;    // Timer2 match interrupt enable
+}
+
+void Init_Timer3(void)
+{
+    // (48 MHz)/(4 FOSC) = 12 MHz tick rate
+    T3CONbits.TMR3CS = 0x0; // 0b00 = Timer1 clock source is the instruction clock (FOSC /4)
+    T3CONbits.T3CKPS = 0x0; // 0b00 = 1:1 Prescale value
+    T3CONbits.T3OSCEN = 0;  // 0b0 = Timer3 crystal driver is off
+    T3CONbits.RD16 = 1;     // 0b1 = Enables register read/write of Timer1 in one 16-bit operation
+    T3CONbits.TMR3ON = 1;   // 0b1 = Timer3 is on
+}
+
+void Init_Eccp1(void)
+{
+    // (48 MHz)/(4 FOSC) = 12 MHz tick rate
+    TCLKCONbits.T3CCP2 = 1; // 0b10 = ECCP1 and ECCP2 both use Timer3 (capture/compare) and Timer4 (PWM)
+    TCLKCONbits.T3CCP1 = 0; // 0b10 = ECCP1 and ECCP2 both use Timer3 (capture/compare) and Timer4 (PWM)
+    PIE1bits.CCP1IE = 1;    // Enable ECCP1 interrupt
 }
 
 void Init_Eusart1(void)
@@ -73,12 +112,18 @@ void Init_Eusart1(void)
     // Desired Baud Rate = Fosc/(4 ([SPBRGHx:SPBRGx] + 1))
     // Solving for SPBRGHx:SPBRGx:
     // X = ((Fosc/Desired Baud Rate)/4) - 1
-    // = ((16000000/115200)/4) - 1
-    // = [33.72] = 34 (our value for the baud rate registers)
-    // Calculated Baud Rate = 16000000/(4 (34 + 1))
+    // = ((48000000/115200)/4) - 1
+    // = [103.167] = 103 (our value for the baud rate registers)
+    // Calculated Baud Rate = 48000000/(4 (34 + 1))
     // = 114285.7
     // Error = (Calculated Baud Rate - Desired Baud Rate)/Desired Baud Rate
-    // = (114285.7 - 115200)/115200 = -0.794%
+    // = (115384.6 - 115200)/115200 = 0.00160%
     SPBRGH1 = 0x00;
-    SPBRG1  = 0x22;
+    SPBRG1  = 0x67;
+}
+
+void Init_Interrupts(void)
+{
+    INTCONbits.GIE = 1;     // 0b1 = Enables all unmasked interrupts
+    INTCONbits.PEIE = 1;    // 0b1 = Enables all unmasked peripheral interrupts (when GIE is also set)
 }

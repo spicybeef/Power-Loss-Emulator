@@ -24,7 +24,23 @@
 
 #include <xc.h>
 
+#include "utils.h"
+
 void __interrupt () interruptHandler(void)
 {
+    // ECCP1 Interrupt
+    if (PIR1bits.CCP1IF)
+    {
+        PIR1bits.CCP1IF = 0;
+        // Generate power-loss pulse
+        Util_GeneratePulseRB0();
+    }
     
+    // Timer2 Match Interrupt
+    if (PIR1bits.TMR2IF)
+    {
+        PIR1bits.TMR2IF = 0;
+        // 10 us tick
+        uptimeTicksMicroSeconds += 10;
+    }
 }
