@@ -41,9 +41,9 @@ void Init_System(void)
 
 void Init_Gpio(void)
 {
-    // Set RB0 as an output and set it low
+    // Set RB0 as an output and set it high (signal will be active low)
+    LATBbits.LATB0 = 1;
     TRISBbits.TRISB0 = 0;
-    LATBbits.LATB0 = 0;
     // Set RB0/REFO as an output for FOSC
     TRISBbits.TRISB2 = 0;
     // Setup RC7 and RC6 for UART RX/TX

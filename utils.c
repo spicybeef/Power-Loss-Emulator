@@ -127,16 +127,12 @@ int scanf(const char *format, ...)
 
 void Util_GeneratePulseRB0(void)
 {
-    LATBbits.LATB0 = 1;
-    NOP();
-    NOP();
-    NOP();
-    NOP();
-    NOP();
-    NOP();
-    NOP();
-    NOP();
     LATBbits.LATB0 = 0;
+    for (int i = 0; i < 20; i++)
+{
+        NOP();
+    }
+    LATBbits.LATB0 = 1;
 }
 
 void Util_SetNewCompareValue(uint16_t desiredPeriod)
