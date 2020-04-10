@@ -47,10 +47,10 @@ static arrayOfStrings_t workloadStrings =
 
 void PowerLossEmu_Init(void)
 {
-    startPeriod = 500;
-    endPeriod = 100;
+    startPeriod = 10000;
+    endPeriod = 5000;
     rampPeriod = 1000;
-    rampSteps = 10;
+    rampSteps = 20;
     // Calculate step size
     if (startPeriod > endPeriod)
     {
@@ -60,8 +60,14 @@ void PowerLossEmu_Init(void)
     {
         rampStepSize = (endPeriod - startPeriod)/rampSteps;
     }
-    workloadLength = 30;
+    workloadLength = 60;
     workloadType = WORKLOAD_SAWTOOTH_DOWN;
+}
+
+functionResult_e PowerLossEmu_PulsePowerLossSignal(unsigned int numArgs, int args[])
+{
+    Util_GeneratePulseRB0();
+    return SUCCESS;
 }
 
 functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[])

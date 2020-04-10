@@ -46,8 +46,9 @@ extern consoleMenu_t mainMenu;
 
 consoleMenuItem_t mainMenuItems[] = 
 {
-    {{"Setup",  "Setup power-loss emulation parameters"},   NO_SUB_MENU,    PowerLossEmu_Setup},
-    {{"Current",  "Display current power-loss parameters"}, NO_SUB_MENU,    PowerLossEmu_CurrentSettings},
+    {{"Pulse", "Pulse the power-loss signal"},              NO_SUB_MENU,    PowerLossEmu_PulsePowerLossSignal},  
+    {{"Setup", "Setup power-loss emulation parameters"},    NO_SUB_MENU,    PowerLossEmu_Setup},
+    {{"Current", "Display current power-loss parameters"},  NO_SUB_MENU,    PowerLossEmu_CurrentSettings},
     {{"Run", "Run power-loss emulation workload"},          NO_SUB_MENU,    PowerLossEmu_RunWorkload},
 };
 consoleMenu_t mainMenu = {{"Main Menu", "This is the main menu."}, mainMenuItems, NO_TOP_MENU, MENU_SIZE(mainMenuItems)};

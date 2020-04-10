@@ -76,16 +76,16 @@ void Init_Timer2(void)
     // (48 MHz)/(4 FOSC) = 12 MHz tick rate
     T2CONbits.T2OUTPS = 0x0;// 0b0000 = 1:1 Postscale
     T2CONbits.T2CKPS = 0x0; // 0b00 = Prescaler is 1
-    PR2 = 120;              // 12 ticks = 1 us compare rate
+    PR2 = 120;              // 120 ticks = 10 us compare rate
     T2CONbits.TMR2ON = 1;   // 0b1 = Timer2 is on
     PIE1bits.TMR2IE = 1;    // Timer2 match interrupt enable
 }
 
 void Init_Timer3(void)
 {
-    // (48 MHz)/(4 FOSC) = 12 MHz tick rate
+    // (48 MHz)/(4 FOSC)/(8 Prescaler) = 1.5 MHz tick rate
     T3CONbits.TMR3CS = 0x0; // 0b00 = Timer1 clock source is the instruction clock (FOSC /4)
-    T3CONbits.T3CKPS = 0x0; // 0b00 = 1:1 Prescale value
+    T3CONbits.T3CKPS = 0x3; // 0b11 = 1:8 Prescale value
     T3CONbits.T3OSCEN = 0;  // 0b0 = Timer3 crystal driver is off
     T3CONbits.RD16 = 1;     // 0b1 = Enables register read/write of Timer1 in one 16-bit operation
     T3CONbits.TMR3ON = 1;   // 0b1 = Timer3 is on

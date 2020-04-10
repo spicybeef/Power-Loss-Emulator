@@ -38,6 +38,7 @@ typedef enum
 typedef const char *const arrayOfStrings_t[];
 
 void PowerLossEmu_Init(void);
+functionResult_e PowerLossEmu_PulsePowerLossSignal(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[]);
 functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[]);
