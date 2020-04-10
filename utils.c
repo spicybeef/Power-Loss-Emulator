@@ -149,6 +149,8 @@ void Util_SetNewCompareValue(uint16_t desiredPeriod)
         CCP1CONbits.CCP1M = 0xB;    // 0b1011 = Compare mode, trigger special event (ECCPx resets TMR1 or TMR3, starts A/D conversion, sets CCxIF bit)
         // 2 us for every 3 ticks
         CCPR1 = (desiredPeriod * 3)/2;
+        // Reset TMR3 value
+        TMR3 = 0;
     }
 }
 

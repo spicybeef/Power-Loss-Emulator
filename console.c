@@ -22,6 +22,8 @@
  * SOFTWARE.
  ******************************************************************************/
 
+#include <xc.h>
+
 #include <conio.h>
 #include <stdio.h>
 #include <string.h>
@@ -90,7 +92,14 @@ void Console_PromptForAnyKeyBlocking(void)
 
 char Console_CheckForKey(void)
 {
-    return 0;
+    if (RCIF)
+{
+        return (char) RCREG1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 void Console_TraverseMenus(consoleMenu_t *menu)

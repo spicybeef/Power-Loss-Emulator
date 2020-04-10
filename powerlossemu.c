@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "console.h"
 #include "utils.h"
 #include "powerlossemu.h"
 
@@ -153,6 +154,8 @@ functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[])
         currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5*sinf(2.0*M_PI*sineStep)));
     }
 
+    // Initialize the comparator
+    Util_SetNewCompareValue(currentPeriod);
     workloadStartTime = Util_GetMicrosecondUptime();
     periodStartTime = workloadStartTime;
     progressStartTime = workloadStartTime;
@@ -221,14 +224,20 @@ functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[])
             progressStartTime = Util_GetMicrosecondUptime();
         }
         
-        // // Check if we're done our workload
+        // Check if we're done our workload
         if (((currentTime - workloadStartTime) / MICROSECONDS_IN_SECONDS) >= workloadLength)
         {
-            Console_PrintNewLine();
             break;
         }
         
+        // Check if we're quitting early
+        if (Console_CheckForKey() != 0)
+        {
+            
+            break;
+        }
     }
+    Console_PrintNewLine();
     // Disable power-loss pulse
     Util_SetNewCompareValue(0);
     Console_Print("Workload exiting!");
