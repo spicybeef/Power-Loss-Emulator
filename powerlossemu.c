@@ -51,7 +51,7 @@ static arrayOfStrings_t workloadStrings =
 void PowerLossEmu_Init(void)
 {
     startPeriod = 10000;
-    endPeriod = 5000;
+    endPeriod = 4000;
     rampPeriod = 1000;
     rampSteps = 20;
     // Calculate step size
@@ -122,6 +122,7 @@ functionResult_e PowerLossEmu_Setup(unsigned int numArgs, int args[])
 functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[])
 {
     Console_Print("Current power loss emulation settings:");
+    Console_PrintDivider();
     Console_Print("Start period:    %6d us", startPeriod);
     Console_Print("End period:      %6d us", endPeriod);
     Console_Print("Ramp period:     %6d ms", rampPeriod);
@@ -132,6 +133,7 @@ functionResult_e PowerLossEmu_CurrentSettings(unsigned int numArgs, int args[])
     }
     Console_Print("Workload length: %6d s", workloadLength);
     Console_Print("Workload type:   %s", workloadStrings[(uint8_t)workloadType]);
+    Console_PrintDivider();
 
     return SUCCESS;
 }
