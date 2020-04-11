@@ -46,6 +46,8 @@ static arrayOfStrings_t workloadStrings =
     ANSI_COLOR_CYAN"Square"ANSI_COLOR_RESET,
 };
 
+
+
 void PowerLossEmu_Init(void)
 {
     startPeriod = 10000;
@@ -61,7 +63,7 @@ void PowerLossEmu_Init(void)
     {
         rampStepSize = (endPeriod - startPeriod)/rampSteps;
     }
-    workloadLength = 60;
+    workloadLength = 300;
     workloadType = WORKLOAD_SAWTOOTH_DOWN;
 }
 
@@ -189,7 +191,7 @@ functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[])
                     break;
                 case WORKLOAD_SINE:
                     sineStep = ((float)currentStep)/((float)rampSteps);
-                    currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5*sinf(2.0*M_PI*sineStep)));
+                    currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5 * cosf(2.0 * M_PI * sineStep)));
                     break;
                 case WORKLOAD_SQUARE:
                     if (currentPeriod == startPeriod)
