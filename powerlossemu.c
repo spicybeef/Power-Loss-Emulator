@@ -193,7 +193,7 @@ functionResult_e PowerLossEmu_RunWorkload(unsigned int numArgs, int args[])
                     break;
                 case WORKLOAD_SINE:
                     sineStep = ((float)currentStep)/((float)rampSteps);
-                    currentPeriod = startPeriod + (endPeriod - startPeriod)*(1.0 + (0.5 * cosf(2.0 * M_PI * sineStep)));
+                    currentPeriod = startPeriod + (endPeriod - startPeriod)*(0.5 + (0.5 * cosf(2.0 * M_PI * sineStep)));
                     break;
                 case WORKLOAD_SQUARE:
                     if (currentPeriod == startPeriod)
